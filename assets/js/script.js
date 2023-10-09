@@ -1,33 +1,44 @@
-
-  // Wrap all code that interacts with the DOM in a call to jQuery to ensure that
-  // the code isn't run until the browser has finished rendering all the elements
-  // in the html.
-  const localeSettings = {};
+const localeSettings = {};
+let currentHour= 0;
+$(function(){
   dayjs.locale(localeSettings);
 
-$("#currentDay").text(`${dayjs().format("dddd MMMM, D")}`);
-currentHour = dayjs().hour();
+  $("#currentDay").text(`${dayjs().format("dddd MMMM, D")}`);
+  currentHour = dayjs().hour();
+  UpdateColors();
+  $(".saveBtn").on("click", saveToLocalStorage);
+})
 
 
-  function UpdateColors() {
-    for (let i = 9; i <= 17; i++) {
-      $(`#hour-${i}`).removeClass("past");
-      $(`#hour-${i}`).removeClass("present");
-      $(`#hour-${i}`).removeClass("future");
-  
-      if (i < currentHour) {
-        $(`#hour-${i}`).addClass("past");
-      } else if (i == currentHour) {
-        $(`#hour-${i}`).addClass("present");
-      } else {
-        $(`#hour-${i}`).addClass("future");
-      }
-    }
+function UpdateColors() {
+  for (let i = 9; i <= 17; i++) {
+    $(`#hour-${i}`).removeClass("past");
+    $(`#hour-${i}`).removeClass("present");
+    $(`#hour-${i}`).removeClass("future");
+
+    if (i < currentHour) {
+      $(`#hour-${i}`).addClass("past");
+    } else if (i == currentHour) {
+      $(`#hour-${i}`).addClass("present");
+    } else {
+      $(`#hour-${i}`).addClass("future");
+    } 
+    let textarea = $(`#hour-${i} textarea`);
+    let text = localStorage.getItem(`hour-${i}`);
+    textarea.val(text);
   }
-  //
-  // TODO: Add code to get any user input that was saved in localStorage and set
-  // the values of the corresponding textarea elements. HINT: How can the id
-  // attribute of each time-block be used to do this?
-  //
-  // TODO: Add code to display the current date in the header of the page.
+}
+function saveToLocalStorage(e) {
+  let parent = $(this).parent()
+  let thisData = {
+    hour: parent.attr("id"),
+    textContent: parent.children("textarea").val(),
+  }
+  localStorage.setItem(thisData.hour,thisData.textContent);
+}
+
+
+
+
+
 
